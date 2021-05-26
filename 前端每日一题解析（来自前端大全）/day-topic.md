@@ -1,3 +1,21 @@
+### 2020.5.25
+
+* 题目
+  下面哪个选项会返回6
+
+  ```js
+    function sumValues(x, y, z) {
+      return x + y + z;
+      }
+  ```
+
+  * A: sumValues([...1, 2, 3])
+  * B: sumValues([...[1, 2, 3]])
+  * C: sumValues(...[1, 2, 3])
+  * D: sumValues([1, 2, 3])
+* 答案及题解
+  C 
+  函数的参数不是数组。
 
 ### 2020.5.24
 
