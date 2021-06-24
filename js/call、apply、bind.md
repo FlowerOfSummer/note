@@ -70,11 +70,11 @@ setTimeout(obj.say,0); //lucy，this指向window对象
     
     let self = this;
     var cacheFn = function() {};
+    cacheFn.prototype = self.prototype;
     let fn = function () {
       let newArgs = [...args, ...arguments]
       return self.apply(this instanceof cacheFn ? this : _this, newArgs)
     }
-    cacheFn.prototype = self.prototype;
     fn.prototype = new cacheFn();
     return fn;
   }
@@ -117,3 +117,56 @@ setTimeout(obj.say,0); //lucy，this指向window对象
       return result
     }
   ```
+
+
+
+```js
+Function.prototype.call = function () {
+  let [_this, ...args] = arguments;
+  _this = _this || window;
+  _this.fn = this;
+  let result = args ? _this.fn(...args) : _this.fn()
+  return result;
+}
+
+Function.prototype.apply = function () {
+  let [_this, args] = arguments;
+  _this = _this || window;
+  _this.fn = this;
+  let result = args ? _this.fn(...args) : _this.fn()
+  return result;
+}
+
+Function.protopyte.bind = function () {
+  let [_this, ...args] = arguments;
+  let self = this;
+  let cacheFn = function () {};
+  cacheFn.prototype = this.prototype;
+
+  let fn = function () {
+    return self.apply(this instanceof cacheFn ? this : _this, [...args, ...arguments])
+  }
+  fn = new cacheFn();
+  return fn;
+}
+
+
+function myNew(fn, ...args) {
+  let obj = {};
+  obj.__proto__ = fn.prototype;
+  let res = fn.call(obj, args);
+  return res instanceof Object ? res : obj;
+}
+
+Promise.all = function (promises) {
+  return new Promise(function () {
+    let result = []
+    promises.forEach(proomise => {
+      promise.then(data => {
+        result.push(data);
+      })
+    })
+    return result;
+  })
+}
+```
