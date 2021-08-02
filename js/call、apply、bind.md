@@ -170,3 +170,61 @@ Promise.all = function (promises) {
   })
 }
 ```
+
+```js
+// 实现reduce方法
+Array.prototype.myReduce(fn, initValue) {
+  if(initValue === undefined && !this.length) {
+    throw Error('myReduce of empty array with no initial value');
+  }
+  let result = initValue ? initValue : this[0];
+  for(let i=initValue ? 0:1;i<this.length;i++) {
+    result = fn(result, this[i], i, this);
+  }
+}
+
+// 使用reduce方法实现map
+Array.prototype.myMap(fn, thisValue) {
+  return this.reduce((total, value, index, arr) => {
+    total = [...total, fn.call(thisValue, value, index, arr)]
+  }, [])
+}
+```
+
+```js
+function repeat(func, times, wait) {
+    //实现这个函数
+  return function(str) {
+    let count = 0;
+    let id = setInterval(() => {
+      if(++count === times) {
+        clearInterval(id);
+      }
+      func(str)
+    }, wait)
+  }
+}
+// 使下面调用代码能正常工作
+const repeatFunc = repeat(console.log, 4, 1000);
+repeatFunc("hellworld"); //会输出4次 helloworld, 每次间隔3秒
+
+repeatFunc("hellworld2");
+
+```
+
+```js
+// 函数柯里化
+
+function curry(fn, curArgs) {
+  return function () {
+    let args = [...arguments];
+    if(curArgs !== undefined) {
+      args = [...args, ...curArgs];
+    }
+    if(args.length < fn.length) {
+      return curry(fn, args);
+    }
+    return fn.apply(null, args);
+  }
+}
+```
