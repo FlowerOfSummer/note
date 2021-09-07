@@ -99,3 +99,21 @@ function resovePromise(x, promise2, resove, reject) {
     resove(x)
   }
 }
+Promise.all = function (promises) {
+  let list = []
+  let count = 0
+  function handle(i, data) {
+    list[i] = data
+    count++
+    if (count == promises.length) {
+      resolve(list)
+    }
+  }
+  return Promise((resolve, reject) => {
+    for (let i = 0; i < promises.length; i++) {
+      promises[i].then(res => {
+        handle(i, res)
+      }, err => reject(err))
+    }
+  })
+}
