@@ -100,3 +100,88 @@ function quickSort(arr) {
 
 ```
 
+#### 5.全排列
+```js
+function getAll (string) {
+  const map = new Map()
+  let res = []
+
+  function dfs(path) {
+    if(path.length === string.length) {
+      res.push(path)
+      return
+    }
+    for(let i=0;i<string.length;i++) {
+      if(map.get(string[i])) continue
+      map.set(string[i], true)
+      path += string[i]
+      dfs(path)
+      path = path.substring(0, path.length-1)
+      map.set(string[i], false)
+    }
+  }
+  dfs('')
+  return res
+}
+
+```
+
+#### instanceof
+```js
+function myInstanceof (target, Fn) {
+  if(typeof target !== 'object' || typeof target !== 'function' || target === null  ) return false
+  let proto = target.__proto__
+  while(true) {
+    if(proto === null) return false
+    if(proto === Fn.prototype) return true
+    proto = proto.__proto__
+  }
+}
+
+```
+
+### 实现map
+```js
+Array.prototype._map = function(exc) {
+  const res = []
+  this.forEach((item, index, arr) => {
+    res[index] = exc(item, index, arr)
+  })
+  return res
+}
+```
+
+### 实现filter
+```js
+Array.prototype._filter = function(exc) {
+  const res = []
+  this.forEach((item, index, arr) => {
+    if(exc(item, index, arr)) {
+      res.push(item)
+    }
+  })
+  return res
+}
+```
+
+### reduce
+```js
+
+Array.prototype._reduce = function (exc, initial = 0) {
+  let res = initial
+  this.forEach((item, index, arr) => {
+    res = exc(res, item)
+  })
+  return res
+}
+```
+
+### Object.creat
+```js
+Object.prototype._creat = function (proto) {
+  const Fn = function () {}
+  Fn.prototype = proto
+  return new Fn()
+}
+
+```
