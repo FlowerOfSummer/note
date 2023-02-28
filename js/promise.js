@@ -99,3 +99,20 @@ function resovePromise(x, promise2, resove, reject) {
     resove(x)
   }
 }
+all(list) {
+  return new Promise((resolve, reject) => {
+      let resValues = [];
+      let counts = 0;
+      for (let [i, p] of list) {
+          resolve(p).then(res => {
+              counts++;
+              resValues[i] = res;
+              if (counts === list.length) {
+                  resolve(resValues)
+              }
+          }, err => {
+              reject(err)
+          })
+      }
+  })
+}

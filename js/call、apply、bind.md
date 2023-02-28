@@ -69,12 +69,14 @@ setTimeout(obj.say,0); //lucy，this指向window对象
     let [_this, ...args] = arguments;
     
     let self = this;
+    
     var cacheFn = function() {};
-    cacheFn.prototype = self.prototype;
     let fn = function () {
       let newArgs = [...args, ...arguments]
       return self.apply(this instanceof cacheFn ? this : _this, newArgs)
     }
+    
+    cacheFn.prototype = self.prototype;
     fn.prototype = new cacheFn();
     return fn;
   }
@@ -119,21 +121,22 @@ setTimeout(obj.say,0); //lucy，this指向window对象
   ```
 
 
-
 ```js
 Function.prototype.call = function () {
   let [_this, ...args] = arguments;
   _this = _this || window;
   _this.fn = this;
   let result = args ? _this.fn(...args) : _this.fn()
+  delete _this.fn;
   return result;
 }
 
 Function.prototype.apply = function () {
-  let [_this, args] = arguments;
+  let [_this, ...args] = arguments;
   _this = _this || window;
   _this.fn = this;
-  let result = args ? _this.fn(...args) : _this.fn()
+  let result = args ? _this.fn(args) : _this.fn()
+  delete _this.fn
   return result;
 }
 
@@ -154,7 +157,7 @@ Function.protopyte.bind = function () {
 function myNew(fn, ...args) {
   let obj = {};
   obj.__proto__ = fn.prototype;
-  let res = fn.call(obj, args);
+  let res = fn.call(obj, ...args);
   return res instanceof Object ? res : obj;
 }
 
@@ -228,3 +231,236 @@ function curry(fn, curArgs) {
   }
 }
 ```
+```js
+Function.prototype.myBind() {
+  if (typeof this !== 'function') {
+    throw Error('Error');
+  }
+  const self = this;
+  const [_this, ...args] = arguments;
+
+  let fn = {};
+  fn.prototype = self.prototype;
+  let resFn = function () {
+    let newArgs = [...args, arguments];
+    return self.apply(this instanceof fn ? this : _this, args);
+  }
+  resFn = new fn();
+  return resFn;
+} 
+
+```
+
+
+```js
+
+function myNew(Fun) {
+  let obj = {};
+  obj.__proto__ = Fun.prototype;
+  let res = Fun.apply(obj, arguments);
+
+  return res instanceof Object ? res : obj;
+}
+```
+
+
+```js 
+
+function Parent() {
+  this.name = '123'
+}
+Parent.prototype.getName() {
+  return this.name;
+}
+function Son() {
+  Parent.apply(this);
+}
+function copy(Parent, Child) {
+  Child.prototype = Object.creat(Parent.prototype)
+  Child.prototype.constructor = Child
+
+}
+
+
+function deepClone(obj, hash = new WeakMap()) {
+  if (obj === null) return obj; // 如果是null或者undefined我就不进行拷贝操作
+  if (obj instanceof Date) return new Date(obj);
+  if (obj instanceof RegExp) return new RegExp(obj);
+  // 可能是对象或者普通的值  如果是函数的话是不需要深拷贝
+  if (typeof obj !== "object") return obj;
+  // 是对象的话就要进行深拷贝
+  if (hash.get(obj)) return hash.get(obj);
+  // 判断是数组还是对象
+  let cloneObj = new obj.constructor();
+  // 找到的是所属类原型上的constructor,而原型上的 constructor指向的是当前类本身
+  hash.set(obj, cloneObj);
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      // 实现一个递归拷贝
+      cloneObj[key] = deepClone(obj[key], hash);
+    }
+  }
+  return cloneObj;
+}
+```
+
+
+```js
+
+function throttled(fn, delay) {
+  let timer = null;
+  
+  return function (...args) {
+    let _this = this
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(_this, args);
+        timer = null
+      }, delay);
+    }
+  }
+}
+
+function debounce(fn, wait) {
+  let timeout;
+  return function() {
+    let _this = this;
+    let args = arguments;
+    clearTimeout(timeout) 
+    timeout = setTimeout(function () {
+      fn.apply(_this, args)
+    }, wait)
+  }
+
+}
+
+function cloneDeep(obj, map = new wakeMap()) {
+  if(typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  if(obj instanceof Date) return new Date(obj);
+  if(obj instanceof RegExp) return new RegExp(obj);
+  if(map.get(obj)) return map.get(obj);
+  
+}
+```
+
+```css
+.pie {
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background: yellowgreen;
+    background-image: linear-gradient(to right,transparent 50%,#655 0);
+}
+ 
+.pie::before {
+    content:'';
+    display:block;
+    margin-left:50%;
+    height:100%;
+    border-radius:0 100% 100% 0/50%;
+    background-color: inherit;
+    transform-origin:left;
+    transform: rotate(.2turn);
+}
+
+```
+
+```html
+<style>
+.pie38{
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  margin:20px;
+  background-color: #ddd;
+  position: relative;
+  display: inline-block;
+  overflow: hidden
+}
+.pie38 .pie_content{
+  line-height: 100px;
+  text-align: center;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  z-index: 8
+}
+.pie38 .pie_left{
+  position: absolute;
+  top:0;
+  left:0;
+  width: 50px;
+  height: 100px;
+  overflow: hidden;
+}
+.pie38 .pie_left:after{
+  content: '';
+  height: 100px;
+  width:50px;
+  border-right:50px solid red;
+  position:absolute;
+  top:0;
+  left:0;
+  transform: rotate(-137deg);
+}
+</style>
+<div class="pie38">
+ <div class="pie_content">38%</div>
+ <div class="pie_left"></div>
+</div>
+ 
+<style>
+.pie88{
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  margin:20px;
+  background-color: #ddd;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+.pie88 .pie_content{
+  line-height: 100px;
+  text-align: center;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  z-index: 8
+}
+.pie88 .pie_left{
+  position: absolute;
+  top:0;
+  left:0;
+  width: 50px;
+  height: 100px;
+  overflow: hidden;
+  background-color: red
+}
+.pie88 .pie_right{
+  position: absolute;
+  top:0;right:0;
+  width: 50px;
+  height: 100px;
+  overflow: hidden;
+}
+.pie88 .pie_right:after{
+  content: '';
+  height: 100px;
+  width:50px;
+  border-left:50px solid red;
+  position:absolute;
+  right:0;top:0;
+  border-radius: 50px;
+  transform: rotate(-137deg);}
+</style>
+ 
+<div class="pie88">
+ <div class="pie_content">88%</div>
+ <div class="pie_left"></div>
+ <div class="pie_right"></div>
+</div>
+```
+
