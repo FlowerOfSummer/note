@@ -16,6 +16,11 @@
   * 根据构造函数返回数据类型判断，是原始值就返回创建的obj,否则返回
 
 ```js
+/**
+ * 实例.__proto__ === 原型
+ * 原型.constructor === 构造函数
+ * 构造函数.prototype === 原型
+ **/
   function mynew(Fun, ...args) {
     let obj = {};
     obj.__proto__ = Fun.prototype;
