@@ -132,3 +132,39 @@ Promise.all = function (promises) {
     }
   })
 }
+Promise.any = function (promises)  {
+  const res = []
+  if(promises.length===0) resolve(res)
+  const count = 0
+  return  new Promise().then(() => {
+    for(let i=0; i<promises.length;i++) {
+      promises[i].then(res => {
+        resolve(res)
+      }).catch(err => {
+        conut++
+        res[i]=err
+        if(count === promises.length) {
+          reject(new AggregateError(res))
+        }
+      })
+    }
+  })
+}
+
+Promise.allSettled = function(promises) {
+  const result = []
+  if(promises.length===0) resolve(result)
+  return Promise.then(() => {
+    for(let i=0;i<promises.length;i++) {
+      promises[i].then((res) => {
+        result[i] = {status: 'fulfilled', data: res}
+      }).catch(err => {
+        result[i] = {status: 'rejected', data: err}
+      })
+    }
+    resolve(result)
+  })
+}
+Promise.race =  function (promises) {
+  
+}

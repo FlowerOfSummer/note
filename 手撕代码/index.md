@@ -1,4 +1,4 @@
-####  1.冒泡排序
+###  1.冒泡排序
 
 * 冒泡排序的思路：遍历数组，然后将最大数沉到最底部；
 * 时间复杂度：O(N^2)；
@@ -24,7 +24,7 @@ function swap(arr, i, j) {
 }
 ```
 
-#### 2.选择排序
+### 2.选择排序
 
 * 选择排序的实现思路：遍历数组，把最小数放在头部；
 * 时间复杂度：O(N^2)；
@@ -53,7 +53,7 @@ function swap(arr, i, j) {
 } 
 ```
 
-#### 3.插入排序
+### 3.插入排序
 
 * 插入排序实现思路：将一个新的数，和前面的比较，只要当前数小于前一个则和前一个交换位置，否则终止；
 * 时间复杂度：O(N^2)；
@@ -74,7 +74,7 @@ function insertSort(arr) {
 }
 ```
 
-#### 4.快速排序
+### 4.快速排序
 
 * 快速排序实现思路：随机取出一个值进行划分，大于该值放右边，小于该值放左边（该算法在经典快排的基础上经过荷兰国旗思想和随机思想进行了改造）
 * 时间复杂度：O(N*logN)
@@ -100,7 +100,7 @@ function quickSort(arr) {
 
 ```
 
-#### 5.全排列
+### 5.全排列
 ```js
 function getAll (string) {
   const map = new Map()
@@ -126,7 +126,7 @@ function getAll (string) {
 
 ```
 
-#### instanceof
+### 6.instanceof
 ```js
 function myInstanceof (target, Fn) {
   if(typeof target !== 'object' || typeof target !== 'function' || target === null  ) return false
@@ -140,7 +140,7 @@ function myInstanceof (target, Fn) {
 
 ```
 
-### 实现map
+### 7.实现map
 ```js
 Array.prototype._map = function(exc) {
   const res = []
@@ -151,7 +151,7 @@ Array.prototype._map = function(exc) {
 }
 ```
 
-### 实现filter
+### 8.实现filter
 ```js
 Array.prototype._filter = function(exc) {
   const res = []
@@ -164,7 +164,7 @@ Array.prototype._filter = function(exc) {
 }
 ```
 
-### reduce
+### 9.reduce
 ```js
 
 Array.prototype._reduce = function (exc, initial = 0) {
@@ -176,7 +176,7 @@ Array.prototype._reduce = function (exc, initial = 0) {
 }
 ```
 
-### Object.creat
+### 10.Object.creat
 ```js
 Object.prototype._creat = function (proto) {
   const Fn = function () {}
@@ -184,4 +184,43 @@ Object.prototype._creat = function (proto) {
   return new Fn()
 }
 
+```
+
+### 11.call
+```js
+Function.prototype._call = function(target, ...args){
+  const _this = target || window || golbal
+  _this.fn = this
+  const result = _this.fn(...args)
+  delete _this.fn 
+  return result
+}
+```
+### 12.apply
+```js
+Function.prototype._apply = function(target, args){
+  const _this = target || window || golbal
+  _this.fn = this
+  const result = _this.fn(...args)
+  delete _this.fn 
+  return result
+}
+```
+### 13.bind
+```js
+Function.prototype._bind = function(target, ...args){
+  const self = this
+  return function(...rest) {
+    return self.call(target, ...args,...rest)
+  }
+}
+```
+### 14.new
+```js
+function myNew(Fn, ...args) {
+  const obj = {}
+  obj.__proto__ = Fn.prototype
+  const res = Fn.call(obj, ...args)
+  return res instanceof Object ? res : obj
+}
 ```
