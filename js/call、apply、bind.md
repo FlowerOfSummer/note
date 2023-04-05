@@ -63,23 +63,34 @@ setTimeout(obj.say,0); //lucy，this指向window对象
 
   ```js
   Function.prototype.bind = function () {
+    // 检查this是否为函数
     if (typeof this !== "function") {
       throw new Error("Function.prototype.bind - what is trying to be bound is not callable")
     }
+    // 将第一个参数赋值给_this，其余参数赋值给args
     let [_this, ...args] = arguments;
     
+    // 保存this
     let self = this;
     
+    // 定义一个空函数
     var cacheFn = function() {};
+    // 定义一个新函数
     let fn = function () {
+      // 将args和arguments合并为一个新数组
       let newArgs = [...args, ...arguments]
+      // 判断this是否为cacheFn的实例，如果是则返回this，否则返回_this
       return self.apply(this instanceof cacheFn ? this : _this, newArgs)
     }
     
+    // 将cacheFn的原型设置为self的原型
     cacheFn.prototype = self.prototype;
+    // 将fn的原型设置为cacheFn的实例
     fn.prototype = new cacheFn();
+    // 返回新函数
     return fn;
   }
+
   ```
 
 * apply
@@ -122,6 +133,37 @@ setTimeout(obj.say,0); //lucy，this指向window对象
 
 
 ```js
+// 实现call方法
+Function.prototype.call = function(context, ...args) {
+  // 检查this是否为函数
+  if (typeof this !== "function") {
+    throw new Error("Function.prototype.call - what is trying to be called is not callable")
+  }
+  // 将函数作为传入的对象的方法调用
+  context.fn = this;
+  // 执行函数
+  let result = context.fn(...args);
+  // 删除函数
+  delete context.fn;
+  // 返回函数执行结果
+  return result;
+}
+
+// 实现apply方法
+Function.prototype.apply = function(context, args) {
+  // 检查this是否为函数
+  if (typeof this !== "function") {
+    throw new Error("Function.prototype.apply - what is trying to be called is not callable")
+  }
+  // 将函数作为传入的对象的方法调用
+  context.fn = this;
+  // 执行函数
+  let result = context.fn(...args);
+  // 删除函数
+  delete context.fn;
+  // 返回函数执行结果
+  return result;
+}
 Function.prototype.call = function () {
   let [_this, ...args] = arguments;
   _this = _this || window;
@@ -149,7 +191,7 @@ Function.protopyte.bind = function () {
   let fn = function () {
     return self.apply(this instanceof cacheFn ? this : _this, [...args, ...arguments])
   }
-  fn = new cacheFn();
+  fn.prototype = new cacheFn();
   return fn;
 }
 
