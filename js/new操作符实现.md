@@ -51,9 +51,40 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 // I am eating dinner
 // 等待了10秒...
 // I am eating junk food
-class LazyMan = {
+class LazyManClass {
   constructor(name) {
+    this.task = []
     this.name = name;
+    console.log(`Hi I am ${this.name}`)
+    setTimeout(async() => {
+      for(let i=0;i<this.task.length;i++) {
+        await this.task[i]()
+      }
+    },0)
+  }
+  wait(time){
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve()
+        console.log(time)
+      }, time* 1000)
+    })
+  }
+  sleep(time) {
+    this.task.push(() => this.wait.call(this, time))
+    return this
+  }
+  eat(food) {
+    this.task.push(() => {
+      console.log(`I am eating ${food}`)
+    })
+    return this
+  }
+  sleepFirst(time) {
+    this.task.unshift(() => this.wait.call(this, time))
+    return this
   }
 }
+let LazyMan = new LazyManClass('Tony')
+LazyMan.eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food')
 ```

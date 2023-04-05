@@ -24,7 +24,7 @@ function MyPromise(executor) {
   }
   executor();
 }
-MyPromise.prototype.then = (onFulfilled, onRejected) {
+MyPromise.prototype.then = (onFulfilled, onRejected) => {
   onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : val => val;
   onRejected = typeof onRejected === 'function' ? onRejected : reason => reason;
   let promise2 = new MyPromise((resove, reject) => {
@@ -76,10 +76,10 @@ function resovePromise(x, promise2, resove, reject) {
     reject(new TypeError('TypeError: Chaining cycle detected for promise #<Promise>'))
   }
   let called = null;
-  if ((x typeof 'object' && x !== null) || (x typeof 'function')) {
+  if ((typeof  x === 'object' && x !== null) || (typeof x === 'function')) {
     try {
       let then = x.then();
-        if (then typeof 'function') {
+        if ( typeof  then === 'function') {
           then.call(x, y=> {
             if(called)  return;
             called = true;
@@ -99,21 +99,23 @@ function resovePromise(x, promise2, resove, reject) {
     resove(x)
   }
 }
-all(list) {
+Promise.all=(list) =>{
   return new Promise((resolve, reject) => {
-      let resValues = [];
-      let counts = 0;
-      for (let [i, p] of list) {
-          resolve(p).then(res => {
-              counts++;
-              resValues[i] = res;
-              if (counts === list.length) {
-                  resolve(resValues)
-              }
-          }, err => {
-              reject(err)
-          })
-      }
+    let resValues = [];
+    let counts = 0;
+    for (let [i, p] of list) {
+        p.then(res => {
+            counts++;
+            resValues[i] = res;
+            if (counts === list.length) {
+                resolve(resValues)
+            }
+        }, err => {
+            reject(err)
+        })
+    }
+  })
+}
 Promise.all = function (promises) {
   let list = []
   let count = 0

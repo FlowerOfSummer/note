@@ -85,7 +85,7 @@ function quickSort(arr) {
   if(arr.length<=1) {
     return arr;
   }
-  let num = arr[0];
+  let num = arr[0];   
   let left = [];
   let right = [];
   for(let i=1;i<arr.length;i++) {
@@ -104,7 +104,7 @@ function quickSort(arr) {
 ```js
 function getAll (string) {
   const map = new Map()
-  let res = []
+  let res = [] 
 
   function dfs(path) {
     if(path.length === string.length) {

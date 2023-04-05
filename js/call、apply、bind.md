@@ -226,12 +226,13 @@ Array.prototype.myReduce(fn, initValue) {
   for(let i=initValue ? 0:1;i<this.length;i++) {
     result = fn(result, this[i], i, this);
   }
+  return result
 }
 
 // 使用reduce方法实现map
 Array.prototype.myMap(fn, thisValue) {
   return this.reduce((total, value, index, arr) => {
-    total = [...total, fn.call(thisValue, value, index, arr)]
+    return [...total, fn.call(thisValue, value, index, arr)]
   }, [])
 }
 ```
