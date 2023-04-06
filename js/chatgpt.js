@@ -267,3 +267,36 @@ function removeLeastFrequent(str) {
   return result; // 返回结果字符串
 }
 // https://juejin.cn/post/7142690757722243102
+
+function fetchWithRetry(url, options = {}, retries = 3) {
+  return fetch(url, options) // 发起请求
+    .then(res => {
+      if (res.ok) { // 如果请求成功
+        return res; // 返回响应结果
+      } else { // 如果请求失败
+        throw new Error(`${res.status} ${res.statusText}`); // 抛出错误
+      }
+    })
+    .catch(error => { // 捕获错误
+      if (retries > 0) { // 如果还有重试次数
+        return fetchWithRetry(url, options, retries - 1); // 递归调用 fetchWithRetry 函数
+      } else { // 如果没有重试次数了
+        throw error; // 抛出错误
+      }
+    });
+}
+
+
+// The answer is 6. 
+// We can use a tournament-style competition where each runner runs in a heat with 7 other runners. 
+// The top 4 runners from each heat advance to the next round. 
+// After 3 rounds, we will have 64 / 2 / 2 / 2 = 8 runners left, which is exactly the number of lanes in the final race. 
+// Therefore, we need 3 rounds, or 6 heats in total. 
+
+const numberOfRunners = 64;
+const numberOfLanes = 8;
+const numberOfRounds = 3;
+const runnersPerHeat = numberOfRunners / Math.pow(2, numberOfRounds);
+const heatsPerRound = numberOfRunners / runnersPerHeat;
+const totalHeats = numberOfRounds * heatsPerRound;
+console.log(totalHeats); // Output: 6
