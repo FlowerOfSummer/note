@@ -151,3 +151,119 @@ function myBind() {
     return fn.apply(_this, args.concat(newArgs));
   };
 }
+/**
+ * 多个请求并发控制
+ * @param {Array} urls 请求地址数组
+ * @param {Number} maxNum 最大并发数
+ * @returns {Promise} Promise 对象
+ */
+// 实现一个多个请求并发控制的函数
+function multiRequest(urls, maxNum) {
+  const len = urls.length; // 获取请求地址数组的长度
+  const result = new Array(len).fill(false); // 创建一个长度为 len 的数组，用于存储请求结果
+  let count = 0; // 计数器，用于记录已经完成的请求数量
+  return new Promise((resolve, reject) => { // 返回一个 Promise 对象
+    while (count < maxNum) { // 当已完成的请求数量小于最大并发数时，继续发起请求
+      next(); // 发起请求
+    }
+    function next() { // 发起请求的函数
+      let current = count++; // 获取当前请求的索引，并将计数器加 1
+      if (current >= len) { // 如果当前请求的索引大于等于请求地址数组的长度
+        !result.includes(false) && resolve(result); // 如果 result 数组中不包含 false，则说明所有请求都已完成，此时将 Promise 对象的状态设置为已完成
+        return; // 结束函数的执行
+      }
+      const url = urls[current]; // 获取当前请求的地址
+      fetch(url) // 发起请求
+        .then(res => {
+          result[current] = res; // 将请求结果存储到 result 数组中
+          if (current < len) { // 如果当前请求的索引小于请求地址数组的长度
+            next(); // 继续发起请求
+          }
+        })
+        .catch(err => {
+          result[current] = err; // 将请求错误信息存储到 result 数组中
+          if (current < len) { // 如果当前请求的索引小于请求地址数组的长度
+            next(); // 继续发起请求
+          }
+        });
+    }
+  });
+}
+
+
+
+
+// 实现一个节流函数
+function throttle(fn, delay) {
+  let timer = null;
+  return function (...args) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args);
+        timer = null;
+      }, delay);
+    }
+  };
+}
+
+// 如果想要最后一次必须执行的话，可以在函数执行前判断是否到达了指定时间间隔，如果是则立即执行
+function throttleLast(fn, delay) {
+  let timer = null;
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+      timer = null;
+    }, delay);
+    if (!timer) {
+      fn.apply(this, args);
+    }
+  };
+}
+
+/**
+ * 数组转树
+ * @param {Array} arr 原始数组
+ * @param {String} idKey id 字段名
+ * @param {String} parentKey 父级 id 字段名
+ * @param {String} childrenKey 子级字段名
+ * @returns {Array} 树形结构数组
+ */
+function arrayToTree(arr, idKey, parentKey, childrenKey) {
+  const map = {}; // 创建一个空对象，用于存储每个节点的引用
+  const result = []; // 创建一个空数组，用于存储根节点
+  for (const item of arr) { // 遍历原始数组
+    const id = item[idKey]; // 获取当前节点的 id
+    const parentId = item[parentKey]; // 获取当前节点的父级 id
+    if (!map[id]) { // 如果 map 对象中不存在当前节点的引用
+      map[id] = { [childrenKey]: [] }; // 在 map 对象中创建当前节点的引用，并添加一个空数组作为子级
+    }
+    map[id] = { ...item, [childrenKey]: map[id][childrenKey] }; // 将当前节点的信息添加到 map 对象中
+    if (parentId === null || parentId === undefined) { // 如果当前节点没有父级
+      result.push(map[id]); // 将当前节点添加到根节点数组中
+    } else { // 如果当前节点有父级
+      if (!map[parentId]) { // 如果 map 对象中不存在当前节点的父级节点的引用
+        map[parentId] = { [childrenKey]: [] }; // 在 map 对象中创建当前节点的父级节点的引用，并添加一个空数组作为子级
+      }
+      map[parentId][childrenKey].push(map[id]); // 将当前节点添加到其父级节点的子级数组中
+    }
+  }
+  return result; // 返回根节点数组
+}
+function removeLeastFrequent(str) {
+  const freq = {}; // 创建一个空对象，用于存储每个字符出现的次数
+  for (const char of str) { // 遍历字符串中的每个字符
+    freq[char] = (freq[char] || 0) + 1; // 将当前字符的出现次数加 1
+  }
+  const minFreq = Math.min(...Object.values(freq)); // 获取字符出现次数的最小值
+  let result = ""; // 创建一个空字符串，用于存储结果
+  for (const char of str) { // 遍历字符串中的每个字符
+    if (freq[char] !== minFreq) { // 如果当前字符的出现次数不是最小值
+      result += char; // 将当前字符添加到结果字符串中
+    }
+  }
+  return result; // 返回结果字符串
+}
+// https://juejin.cn/post/7142690757722243102
