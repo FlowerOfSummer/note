@@ -162,36 +162,39 @@ function multiRequest(urls, maxNum) {
   const len = urls.length; // 获取请求地址数组的长度
   const result = new Array(len).fill(false); // 创建一个长度为 len 的数组，用于存储请求结果
   let count = 0; // 计数器，用于记录已经完成的请求数量
-  return new Promise((resolve, reject) => { // 返回一个 Promise 对象
-    while (count < maxNum) { // 当已完成的请求数量小于最大并发数时，继续发起请求
+  return new Promise((resolve, reject) => {
+    // 返回一个 Promise 对象
+    while (count < maxNum) {
+      // 当已完成的请求数量小于最大并发数时，继续发起请求
       next(); // 发起请求
     }
-    function next() { // 发起请求的函数
+    function next() {
+      // 发起请求的函数
       let current = count++; // 获取当前请求的索引，并将计数器加 1
-      if (current >= len) { // 如果当前请求的索引大于等于请求地址数组的长度
+      if (current >= len) {
+        // 如果当前请求的索引大于等于请求地址数组的长度
         !result.includes(false) && resolve(result); // 如果 result 数组中不包含 false，则说明所有请求都已完成，此时将 Promise 对象的状态设置为已完成
         return; // 结束函数的执行
       }
       const url = urls[current]; // 获取当前请求的地址
       fetch(url) // 发起请求
-        .then(res => {
+        .then((res) => {
           result[current] = res; // 将请求结果存储到 result 数组中
-          if (current < len) { // 如果当前请求的索引小于请求地址数组的长度
+          if (current < len) {
+            // 如果当前请求的索引小于请求地址数组的长度
             next(); // 继续发起请求
           }
         })
-        .catch(err => {
+        .catch((err) => {
           result[current] = err; // 将请求错误信息存储到 result 数组中
-          if (current < len) { // 如果当前请求的索引小于请求地址数组的长度
+          if (current < len) {
+            // 如果当前请求的索引小于请求地址数组的长度
             next(); // 继续发起请求
           }
         });
     }
   });
 }
-
-
-
 
 // 实现一个节流函数
 function throttle(fn, delay) {
@@ -234,17 +237,22 @@ function throttleLast(fn, delay) {
 function arrayToTree(arr, idKey, parentKey, childrenKey) {
   const map = {}; // 创建一个空对象，用于存储每个节点的引用
   const result = []; // 创建一个空数组，用于存储根节点
-  for (const item of arr) { // 遍历原始数组
+  for (const item of arr) {
+    // 遍历原始数组
     const id = item[idKey]; // 获取当前节点的 id
     const parentId = item[parentKey]; // 获取当前节点的父级 id
-    if (!map[id]) { // 如果 map 对象中不存在当前节点的引用
+    if (!map[id]) {
+      // 如果 map 对象中不存在当前节点的引用
       map[id] = { [childrenKey]: [] }; // 在 map 对象中创建当前节点的引用，并添加一个空数组作为子级
     }
     map[id] = { ...item, [childrenKey]: map[id][childrenKey] }; // 将当前节点的信息添加到 map 对象中
-    if (parentId === null || parentId === undefined) { // 如果当前节点没有父级
+    if (parentId === null || parentId === undefined) {
+      // 如果当前节点没有父级
       result.push(map[id]); // 将当前节点添加到根节点数组中
-    } else { // 如果当前节点有父级
-      if (!map[parentId]) { // 如果 map 对象中不存在当前节点的父级节点的引用
+    } else {
+      // 如果当前节点有父级
+      if (!map[parentId]) {
+        // 如果 map 对象中不存在当前节点的父级节点的引用
         map[parentId] = { [childrenKey]: [] }; // 在 map 对象中创建当前节点的父级节点的引用，并添加一个空数组作为子级
       }
       map[parentId][childrenKey].push(map[id]); // 将当前节点添加到其父级节点的子级数组中
@@ -254,13 +262,16 @@ function arrayToTree(arr, idKey, parentKey, childrenKey) {
 }
 function removeLeastFrequent(str) {
   const freq = {}; // 创建一个空对象，用于存储每个字符出现的次数
-  for (const char of str) { // 遍历字符串中的每个字符
+  for (const char of str) {
+    // 遍历字符串中的每个字符
     freq[char] = (freq[char] || 0) + 1; // 将当前字符的出现次数加 1
   }
   const minFreq = Math.min(...Object.values(freq)); // 获取字符出现次数的最小值
   let result = ""; // 创建一个空字符串，用于存储结果
-  for (const char of str) { // 遍历字符串中的每个字符
-    if (freq[char] !== minFreq) { // 如果当前字符的出现次数不是最小值
+  for (const char of str) {
+    // 遍历字符串中的每个字符
+    if (freq[char] !== minFreq) {
+      // 如果当前字符的出现次数不是最小值
       result += char; // 将当前字符添加到结果字符串中
     }
   }
@@ -270,28 +281,32 @@ function removeLeastFrequent(str) {
 
 function fetchWithRetry(url, options = {}, retries = 3) {
   return fetch(url, options) // 发起请求
-    .then(res => {
-      if (res.ok) { // 如果请求成功
+    .then((res) => {
+      if (res.ok) {
+        // 如果请求成功
         return res; // 返回响应结果
-      } else { // 如果请求失败
+      } else {
+        // 如果请求失败
         throw new Error(`${res.status} ${res.statusText}`); // 抛出错误
       }
     })
-    .catch(error => { // 捕获错误
-      if (retries > 0) { // 如果还有重试次数
+    .catch((error) => {
+      // 捕获错误
+      if (retries > 0) {
+        // 如果还有重试次数
         return fetchWithRetry(url, options, retries - 1); // 递归调用 fetchWithRetry 函数
-      } else { // 如果没有重试次数了
+      } else {
+        // 如果没有重试次数了
         throw error; // 抛出错误
       }
     });
 }
 
-
-// The answer is 6. 
-// We can use a tournament-style competition where each runner runs in a heat with 7 other runners. 
-// The top 4 runners from each heat advance to the next round. 
-// After 3 rounds, we will have 64 / 2 / 2 / 2 = 8 runners left, which is exactly the number of lanes in the final race. 
-// Therefore, we need 3 rounds, or 6 heats in total. 
+// The answer is 6.
+// We can use a tournament-style competition where each runner runs in a heat with 7 other runners.
+// The top 4 runners from each heat advance to the next round.
+// After 3 rounds, we will have 64 / 2 / 2 / 2 = 8 runners left, which is exactly the number of lanes in the final race.
+// Therefore, we need 3 rounds, or 6 heats in total.
 
 const numberOfRunners = 64;
 const numberOfLanes = 8;
