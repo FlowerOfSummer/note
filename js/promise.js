@@ -141,6 +141,17 @@ Promise.all = function (promises) {
     }
   });
 };
+Promise.all = function (promises) {
+  return new Promise(function () {
+    let result = [];
+    promises.forEach((promise) => {
+      promise.then((data) => {
+        result.push(data);
+      });
+    });
+    return result;
+  });
+};
 Promise.any = function (promises) {
   const res = [];
   if (promises.length === 0) resolve(res);
