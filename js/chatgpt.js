@@ -260,6 +260,7 @@ function arrayToTree(arr, idKey, parentKey, childrenKey) {
   }
   return result; // 返回根节点数组
 }
+//  去除字符串中出现次数最少的字符，不改变原字符串的顺序
 function removeLeastFrequent(str) {
   const freq = {}; // 创建一个空对象，用于存储每个字符出现的次数
   for (const char of str) {
@@ -278,7 +279,7 @@ function removeLeastFrequent(str) {
   return result; // 返回结果字符串
 }
 // https://juejin.cn/post/7142690757722243102
-
+// 请求重连
 function fetchWithRetry(url, options = {}, retries = 3) {
   return fetch(url, options) // 发起请求
     .then((res) => {
