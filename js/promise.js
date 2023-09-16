@@ -190,3 +190,17 @@ Promise.allSettled = function (promises) {
   });
 };
 Promise.race = function (promises) {};
+Promise.race = function (promises) {
+  return new Promise(resolve => {
+    const len = promises.length;
+    for (let i = 0; i < len; i += 1) {
+      const promise = promises[i];
+      // 这里使用 Promise.resolve 包了一下，以防传递了 non-promise
+      Promise.resolve(promise).then(res => {
+        resolve(res);
+      }, error => {
+        resolve(error);     
+      });
+    }
+  });
+}
