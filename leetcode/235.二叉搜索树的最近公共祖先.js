@@ -20,7 +20,16 @@
  * @return {TreeNode}
  */
 var lowestCommonAncestor = function(root, p, q) {
-
+    while(root !== null) {
+        if(p>root.val && q>root.val) {
+            root = root.right
+        } else if(p<root.val && q<root.val) {
+            root = root.left
+        } else {
+            return root.val
+        }
+    }
+    return root.val
     
 };
 // @lc code=end
