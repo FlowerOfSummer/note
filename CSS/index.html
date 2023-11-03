@@ -64,6 +64,16 @@ height: 100px;
 background-color: red;
 position: relative;
 }
+.a{
+    width: 400px;
+    min-height: 200px;
+    text-align: center;
+    border: 1px solid #000;
+  }
+  .a p{
+    display: inline-block;
+    text-align: left;
+  }
 /* 定义动画 */
 /* @keyframes rotate {
 0% {
@@ -86,5 +96,15 @@ animation: rotate 2s infinite;
         </div>
         <div class="box"></div>
         <div class="my-element"></div>
+
+        <div class="a">
+            <p>
+              css 多行文字左对齐
+        “利用行内元素: 我首先想到了这个思路,思路如下: 让P居中,P中的文字左对齐:(P的父级text-align:center; P自身text-align:left;) P的宽度根据文字的宽度伸缩,当文字为一行时,则P的宽度小于LI的宽度,居中;则看上去文字是局中的。 当大于一行时,P的宽度和LI的宽度是一致的,文字就居左了。” 更多 >
+            </p>
+        </div>
+        <div class="a">
+            <p>到了这个思路,思路如</p>
+        </div>
     </body>
 </html>
