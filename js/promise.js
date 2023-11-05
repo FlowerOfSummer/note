@@ -123,7 +123,7 @@ Promise.all = (list) => {
 Promise.all = function (promises) {
   let list = [];
   let count = 0;
-  function handle(i, data) {
+  function handle(i, data, resolve) {
     list[i] = data;
     count++;
     if (count == promises.length) {
@@ -134,24 +134,14 @@ Promise.all = function (promises) {
     for (let i = 0; i < promises.length; i++) {
       promises[i].then(
         (res) => {
-          handle(i, res);
+          handle(i, res, resolve);
         },
         (err) => reject(err)
       );
     }
   });
 };
-Promise.all = function (promises) {
-  return new Promise(function () {
-    let result = [];
-    promises.forEach((promise) => {
-      promise.then((data) => {
-        result.push(data);
-      });
-    });
-    return result;
-  });
-};
+
 Promise.any = function (promises) {
   const res = [];
   if (promises.length === 0) resolve(res);
