@@ -165,23 +165,28 @@ Promise.any = function (promises) {
 
 Promise.allSettled = function (promises) {
   const result = [];
-  if (promises.length === 0) resolve(result);
-  return Promise.then(() => {
+  return new Promise((resolve) => {
+    if (promises.length === 0) resolve(result);
     for (let i = 0; i < promises.length; i++) {
-      promises[i]
+      Promise.resolve(promises[i])
         .then((res) => {
-          result[i] = { status: "fulfilled", data: res };
+          result[i] = { status: "fulfilled", value: res };
+          if(result.length === promises.length) {
+            resolve(result);
+          }
         })
         .catch((err) => {
-          result[i] = { status: "rejected", data: err };
+          result[i] = { status: "rejected", reason: err };
+          if(result.length === promises.length) {
+            resolve(result);
+          }
         });
     }
-    resolve(result);
   });
 };
 Promise.race = function (promises) {};
 Promise.race = function (promises) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const len = promises.length;
     for (let i = 0; i < len; i += 1) {
       const promise = promises[i];
@@ -189,7 +194,7 @@ Promise.race = function (promises) {
       Promise.resolve(promise).then(res => {
         resolve(res);
       }, error => {
-        resolve(error);     
+        reject(error);     
       });
     }
   });
